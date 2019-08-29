@@ -44,19 +44,19 @@ modulex.exports={
  * @desc Node.js API情况下使用  webpack-dev-server
  * 
  */
-const webpackDevServer = require('webpack-dev-server')
-const webpack= require('webpack')
+const webpackDevServer = require('webpack-dev-server');
+const webpack= require('webpack');
 
-const config =require('./webpack.config')
+const config =require('./webpack.config');
 
 const options = {
     contentBase:'./dist',
     hot:true,
     host:"localhost"
-}
-webpackDevServer.addDevServerEntrypoints(config,options)
-const compiler = webpack(config)
-const server = new webpackDevServer(compiler,options)
+};
+webpackDevServer.addDevServerEntrypoints(config,options);
+const compiler = webpack(config);
+const server = new webpackDevServer(compiler,options);
 server.listen(5000,'localhost',()=>{
     console.log('dev server listening on port 5000')
 })
@@ -71,3 +71,73 @@ server.listen(5000,'localhost',()=>{
 
 ## tree shaking
 > 依赖es2015模块系统中的静态结构特性，例如`import`，`export`，起于es2015模块打包工具 `rollup`
+
+## webpack打包a、b文件为c
+
+a.js文件
+```js
+function a() {
+	console.info('hello a');
+}
+
+export default a
+
+```
+
+b.js文件
+```js
+function b() {
+	console.info('hello b');
+}
+
+export default b
+
+// 导出是b: Object [Module] { default: [Function: b] }，需要访问a.default()才可以
+
+```
+
+
+c.js文件
+
+```js
+const a =  require('./a');
+const b = require('./b');
+
+
+console.info("a:",a);
+console.info("b:",b);
+
+console.info(a.default());
+
+
+```
+
+webpack.config.js
+```js
+const path = require('path');
+module.exports={
+    // entry:'./dist/index.js',
+    entry:'./c.js',
+    target: "node",
+    mode:"development",
+    resolve:{
+        extensions:['.js']
+    },
+    output:{
+        filename:"build.js",
+        // filename:"axios-ts.js",
+        path:path.resolve(__dirname,'pro')
+    }
+};
+
+
+```
+原型node文件
+```shell
+node build.js
+```
+
+发现需要`console.log(a.default())`函数
+
+
+### 总结：webpack 打包出来的文件无法被node require，引用的文件竟然是一个空对象 {}

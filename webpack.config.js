@@ -6,9 +6,7 @@ module.exports = {
     // 入口
     entry: {
         app: './src/index.js',
-        // print: "./src/print.js",
         anothor: "./src/anthor-module.js"
-        // app:"./src/index.js",
     },
     // 修补
     module: {
