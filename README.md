@@ -22,9 +22,9 @@ modulex.exports={
 }
 ```
 ## watch ，不手动npm run webpack，文件变化则自动打包
-```js
+```json
 
-"watch":"webpack watch"
+{"watch":"webpack watch"}
 
 ```
 ## webpack-dev-server 实时重新加载
